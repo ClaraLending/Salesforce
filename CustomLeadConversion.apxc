@@ -1,0 +1,21 @@
+global class CustomLeadConversion {
+ WebService static Id  convertLeadtoOpp(string id){
+        //name the opportunity the First and last name of the lead
+        //make sure to put the new contact under a specfic account: Expedite account
+        //select firstname,lastname from lead
+        //select id from account where name='Expedite'
+        Lead l= [select firstname,lastname from lead where id=:id];
+       Account acc = [select id from account where name='Expedite'];
+       Database.LeadConvert lc = new database.LeadConvert();
+        lc.setLeadId(id);
+       lc.setOpportunityName(l.firstname + ' '+l.LastName +' Opportunity');
+       lc.setAccountId(acc.id);
+        LeadStatus convertStatus = [SELECT Id, MasterLabel 
+                                    FROM LeadStatus 
+                                    WHERE IsConverted=true LIMIT 1];                
+        lc.setConvertedStatus(convertStatus.MasterLabel);
+        Database.LeadConvertResult lcr = Database.convertLead(lc);
+        Id OpportunityId=[select ConvertedOpportunityId from Lead where id=:id].ConvertedOpportunityId;
+        return OpportunityId;
+    }
+}
