@@ -1,0 +1,79 @@
+@isTest(SeeAllData=true)
+public class TestButtons {
+       
+
+    public static testmethod void test1(){
+        
+        User u = [select id,email from user limit 1];
+        //Lead l = new lead (lastname='Testlead1', company='Testcompany1', Message__c='Hello', email='test@test.com', ownerid=u.id);
+        //insert l;
+        Lead l= [select id, email, owner.email,message__c from lead where message__c<>'' limit 1];
+        StaticResourceCalloutMock mock = new StaticResourceCalloutMock();
+        mock.setStaticResource('JsonInvite');
+        mock.setStatusCode(200);
+        mock.setHeader('X-Expedite-Auth','97bbe17eb17bf670260f9e2fde422863742b2839');
+        Test.setMock(HttpCalloutMock.class, mock);
+        HttpRequest req = new HttpRequest();
+        req.setBody('borrower=' + l.email + '&agent='+ l.owner.email +'&message='+ l.Message__c);         
+        Http http = new Http();
+        HTTPResponse res = http.send(req);
+        WebServiceRest.inviteLead(l.id);
+        
+    }
+    
+    public static testmethod void test2(){
+        
+        User u = [select id,email from user limit 1];
+        //Lead l = new lead (lastname='Testlead1', company='Testcompany1', Message__c='Hello', email='test@test.com', ownerid=u.id);
+        //insert l;
+        Opportunity opp = [select Id, email__c, owner.email,Message__c from Opportunity where message__c<>'' limit 1];
+        StaticResourceCalloutMock mock = new StaticResourceCalloutMock();
+        mock.setStaticResource('JsonInvite');
+        mock.setStatusCode(200);
+        mock.setHeader('X-Expedite-Auth','97bbe17eb17bf670260f9e2fde422863742b2839');
+        Test.setMock(HttpCalloutMock.class, mock);
+        HttpRequest req = new HttpRequest();
+        req.setBody('borrower=' + opp.email__c + '&agent='+ opp.owner.email +'&message='+ opp.Message__c);         
+        Http http = new Http();
+        HTTPResponse res = http.send(req);
+        WebServiceRest.invitePost(opp.id);  
+    }
+    
+    public static testmethod void test3(){
+         User u = [select id,email from user limit 1];
+        //Lead l = new lead (lastname='Testlead1', company='Testcompany1', Message__c='Hello', email='test@test.com', ownerid=u.id);
+        //insert l;
+        Lead l= [select id, email, owner.email from lead limit 1];
+        StaticResourceCalloutMock mock = new StaticResourceCalloutMock();
+        mock.setStaticResource('URlExped');
+        mock.setStatusCode(200);
+        mock.setHeader('X-Expedite-Auth','97bbe17eb17bf670260f9e2fde422863742b2839');
+        Test.setMock(HttpCalloutMock.class, mock);
+        HttpRequest req = new HttpRequest();
+        //req.setBody('borrower=' + l.email + '&agent='+ l.owner.email +'&message='+ l.Message__c);         
+        Http http = new Http();
+        HTTPResponse res = http.send(req);
+        WebServiceRest.impersonateLead(l.id);
+    }
+    
+    public static testmethod void test4(){
+        
+         User u = [select id,email from user limit 1];
+        //Lead l = new lead (lastname='Testlead1', company='Testcompany1', Message__c='Hello', email='test@test.com', ownerid=u.id);
+        //insert l;
+        Opportunity opp = [select Id, email__c, owner.email,Name from Opportunity limit 1];
+        StaticResourceCalloutMock mock = new StaticResourceCalloutMock();
+        mock.setStaticResource('JsonInvite');
+        mock.setStatusCode(200);
+        mock.setHeader('X-Expedite-Auth','97bbe17eb17bf670260f9e2fde422863742b2839');
+        Test.setMock(HttpCalloutMock.class, mock);
+        HttpRequest req = new HttpRequest();
+       // req.setBody('borrower=' + opp.email__c + '&agent='+ opp.owner.email +'&message='+ opp.Message__c);         
+        Http http = new Http();
+        HTTPResponse res = http.send(req);     
+        WebServiceRest.impersonateGet(opp.id); 
+    }
+    
+   
+        
+}
